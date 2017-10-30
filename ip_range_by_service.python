@@ -1,0 +1,70 @@
+import json
+import numpy as np
+
+from itertools import izip_longest as zip_longest
+np.set_printoptions(suppress=True)
+
+
+from pprint import pprint
+
+with open('ip-ranges.json') as data_file:    
+    data = json.load(data_file)
+    ip_range = data["prefixes"]
+    minus_from=[]
+    to_be_minus=[]    
+    ser = []
+    host_ip = []
+    for hosts in ip_range:
+        service = hosts["service"]
+        ser.append(service) 
+       	li_u_reg = [str(i) for i in ser]
+        
+#        print len(li_u_reg)
+
+	host = hosts["ip_prefix"]
+        host_ip.append(host)
+#    	print host
+#        print len(host)          
+
+        minus_from.append(host[-2:])
+	li_u_minus_from = [int(i) for i in minus_from]
+#        print li_u_minus_from
+
+        to_be_minus.append(host.split('.')[1])
+       	li_u_to_be_minus = [int(i) for i in to_be_minus]
+#        print li_u_to_be_minus
+    
+#    print li_u_reg             
+    minus = [a - b for a, b in zip(li_u_to_be_minus, li_u_minus_from)]
+    final_an = [2 ** i for i in minus]  
+    final_ans = map(int,final_an)
+#    print final_ans   
+
+    b = map(int, final_ans)  
+#    print b
+
+    c = np.column_stack((li_u_reg,b))
+#    print c 
+ 
+    d = {}
+    for l in c:
+        key = l[0] 
+        value = l[1:]
+        if key not in d:
+            d[key] = value
+        else:
+            d[key] = [sum(i)for i in zip(d[key], value)]
+    print(d)
+
+
+
+
+
+       
+
+   
+
+ 
+
+
+
